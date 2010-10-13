@@ -1,10 +1,13 @@
-; RUN: llc < %s -march=x86-64 | FileCheck -check-prefix=X86-64 %s
+; RUN: llc < %s -mtriple=x86_64-linux | FileCheck -check-prefix=X86-64 %s
+; RUN: llc < %s -mtriple=x86_64-win32 | FileCheck -check-prefix=WIN64 %s
 ; RUN: llc < %s -march=x86 | FileCheck -check-prefix=X86 %s
 
 ; X86: movl	4(%esp), %eax
 ; X86: movl	8(%esp), %edx
 
 ; X86-64: movq	8(%rsp), %rax
+
+; WIN64:  movq   (%rcx), %rax
 
 %struct.s = type { i64, i64, i64 }
 

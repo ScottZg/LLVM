@@ -1,5 +1,6 @@
-; RUN: llc < %s -march=x86 | not grep lea
-; RUN: llc < %s -march=x86-64 | not grep lea
+; RUN: llc < %s -march=x86            | FileCheck %s
+; RUN: llc < %s -mtriple=x86_64-linux | FileCheck %s
+; CHECK-NOT:     lea
 
 @B = external global [1000 x float], align 32
 @A = external global [1000 x float], align 32
@@ -28,3 +29,31 @@ bb:
 return:
 	ret void
 }
+
+; RUN: llc < %s -mtriple=x86_64-win32 -asm-verbose=false | FileCheck %s -check-prefix=WIN64
+; WIN64: foo:
+; WIN64:      subq    $16, %rsp
+; WIN64-NEXT: movq    %rsi, (%rsp)
+; WIN64-NEXT: movq    %rdi, 8(%rsp)
+; WIN64-NEXT: testl   %ecx, %ecx
+; WIN64-NEXT: jle     .LBB0_3
+; WIN64-NEXT: xorl    %eax, %eax
+; WIN64-NEXT: movl    $64, %edx
+; WIN64-NEXT: leaq    B(%rip), %rsi
+; WIN64-NEXT: leaq    A(%rip), %rdi
+; WIN64-NEXT: leaq    P(%rip), %r8
+; WIN64: .LBB0_2:
+; WIN64-NEXT: movslq  %eax, %rax
+; WIN64-NEXT: movss   (%rsi,%rax,4), %xmm0
+; WIN64-NEXT: addss   %xmm0, %xmm0
+; WIN64-NEXT: movss   %xmm0, (%rdi,%rax,4)
+; WIN64-NEXT: movl    %edx, (%r8,%rax,4)
+; WIN64-NEXT: addl    $2, %edx
+; WIN64-NEXT: incl    %eax
+; WIN64-NEXT: cmpl    %eax, %ecx
+; WIN64-NEXT: jne     .LBB0_2
+; WIN64-NEXT: .LBB0_3:
+; WIN64-NEXT: movq    8(%rsp), %rdi
+; WIN64-NEXT: movq    (%rsp), %rsi
+; WIN64-NEXT: addq    $16, %rsp
+; WIN64-NEXT: ret

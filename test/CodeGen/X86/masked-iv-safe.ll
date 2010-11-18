@@ -1,12 +1,37 @@
-; RUN: llc < %s -march=x86-64 > %t
-; RUN: not grep and %t
-; RUN: not grep movz %t
-; RUN: not grep sar %t
-; RUN: not grep shl %t
-; RUN: grep add %t | count 2
-; RUN: grep inc %t | count 4
-; RUN: grep dec %t | count 2
-; RUN: grep lea %t | count 2
+; RUN: llc < %s -mtriple=x86_64-linux | FileCheck %s
+; RUN: llc < %s -mtriple=x86_64-win32 | FileCheck %s
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     inc
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     dec
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     inc
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     dec
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     inc
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     addq $255, %r
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     addq $16777215, %r
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     lea
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     inc
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
+; CHECK:     lea
+; CHECK-NOT:     {{(inc|dec|lea)}}
+; CHECK-NOT:     {{(and|movz|sar|shl)}}
 
 ; Optimize away zext-inreg and sext-inreg on the loop induction
 ; variable using trip-count information.

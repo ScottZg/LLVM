@@ -1,4 +1,4 @@
-; RUN: llc -march=x86-64 < %s | FileCheck %s
+; RUN: llc -mtriple=x86_64-linux < %s | FileCheck %s
 
 ; Commute the comparison to avoid a move.
 ; PR7500.
@@ -17,4 +17,10 @@ entry:
   ret <2 x double> %tmp8
 }
 
-
+; RUN: llc -mtriple=x86_64-win32 -asm-verbose=false < %s | FileCheck %s -check-prefix=WIN64
+; WIN64: a:
+; WIN64-NEXT: movdqa  (%rdx), %xmm0
+; WIN64-NEXT: movdqa  (%rcx), %xmm1
+; WIN64-NEXT: pcmpeqd %xmm1, %xmm0
+; WIN64-NEXT: pand    %xmm1, %xmm0
+; WIN64-NEXT: ret

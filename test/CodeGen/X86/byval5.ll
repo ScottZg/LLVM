@@ -1,5 +1,43 @@
-; RUN: llc < %s -march=x86-64 | grep rep.movsq | count 2
-; RUN: llc < %s -march=x86 | grep rep.movsl	 | count 2
+; RUN: llc < %s -mtriple=x86_64-linux | FileCheck %s -check-prefix=X64
+; X64-NOT:     rep
+; X64-NOT:     movsq
+; X64:     rep;movsq
+; X64-NOT:     rep
+; X64-NOT:     movsq
+; X64:     rep;movsq
+; X64-NOT:     rep
+; X64-NOT:     movsq
+
+; RUN: llc < %s -mtriple=x86_64-win32 | FileCheck %s -check-prefix=W64
+; W64: {{^g:}}
+; W64:      subq    $184, %rsp
+; W64:      movq    %rsi, 176(%rsp)
+; W64-NEXT: movb    %cl, 40(%rsp)
+; W64-NEXT: movb    %dl, 41(%rsp)
+; W64-NEXT: movb    %r8b, 42(%rsp)
+; W64-NEXT: movb    %r9b, 43(%rsp)
+; W64-NEXT: movb    224(%rsp), %al
+; W64-NEXT: movb    %al, 44(%rsp)
+; W64-NEXT: movb    232(%rsp), %al
+; W64-NEXT: movb    %al, 45(%rsp)
+; W64-NEXT: leaq    40(%rsp), %rsi
+; W64-NEXT: movq    %rsi, %rcx
+; W64-NEXT: callq   f
+; W64-NEXT: movq    %rsi, %rcx
+; W64-NEXT: callq   f
+; W64-NEXT: movq    176(%rsp), %rsi
+; W64-NEXT: addq    $184, %rsp
+; W64-NEXT: ret
+
+; RUN: llc < %s -march=x86 | FileCheck %s -check-prefix=X32
+; X32-NOT:     rep
+; X32-NOT:     movsl
+; X32:     rep;movsl
+; X32-NOT:     rep
+; X32-NOT:     movsl
+; X32:     rep;movsl
+; X32-NOT:     rep
+; X32-NOT:     movsl
 
 %struct.s = type { i8, i8, i8, i8, i8, i8, i8, i8,
                    i8, i8, i8, i8, i8, i8, i8, i8,

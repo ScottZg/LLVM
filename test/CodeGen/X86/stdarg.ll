@@ -1,4 +1,18 @@
-; RUN: llc < %s -march=x86-64 | grep {testb	\[%\]al, \[%\]al}
+; RUN: llc < %s -mtriple=x86_64-linux | FileCheck %s
+; CHECK: testb %al, %al
+
+; RUN: llc < %s -mtriple=x86_64-win32 | FileCheck %s -check-prefix=WIN64
+; WIN64: {{^foo:}}
+; WIN64:      subq    $56, %rsp
+; WIN64-NEXT: movq    %r9, 88(%rsp)
+; WIN64-NEXT: movq    %r8, 80(%rsp)
+; WIN64-NEXT: movq    %rdx, 72(%rsp)
+; WIN64-NEXT: leaq    72(%rsp), %rax
+; WIN64-NEXT: movq    %rax, 32(%rsp)
+; WIN64-NEXT: leaq    32(%rsp), %rcx
+; WIN64-NEXT: callq   bar
+; WIN64-NEXT: addq    $56, %rsp
+; WIN64-NEXT: ret
 
 %struct.__va_list_tag = type { i32, i32, i8*, i8* }
 

@@ -1,5 +1,22 @@
-; RUN: llc < %s -march=x86-64 | grep paddw | count 2
-; RUN: llc < %s -march=x86-64 | not grep mov
+; RUN: llc < %s -mtriple=x86_64-linux | FileCheck %s
+; CHECK-NOT:     mov
+; CHECK:     paddw
+; CHECK-NOT:     mov
+; CHECK:     paddw
+; CHECK-NOT:     paddw
+; CHECK-NOT:     mov
+
+; RUN: llc < %s -mtriple=x86_64-win32 | FileCheck %s -check-prefix=WIN64
+; WIN64:   {{^test1:}}
+; WIN64:      movdqa  (%rcx), %xmm0
+; WIN64-NEXT: paddw   (%rdx), %xmm0
+; WIN64:   {{^test2:}}
+; WIN64:      movdqa  (%rdx), %xmm0
+; WIN64-NEXT: paddw   (%rcx), %xmm0
+; WIN64:   {{^test3:}}
+; WIN64:      movdqa  (%rcx), %xmm1
+; WIN64-NEXT: pshufd  $27, %xmm1, %xmm0
+; WIN64-NEXT: addps   %xmm1, %xmm0
 
 ; The 2-addr pass should ensure that identical code is produced for these functions
 ; no extra copy should be generated.

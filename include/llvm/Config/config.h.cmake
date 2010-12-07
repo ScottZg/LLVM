@@ -4,6 +4,9 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
+#ifdef _WIN32_WINNT
+#undef /*nosubst*/_WIN32_WINNT
+#endif
 
 /* Define if CBE is enabled for printf %a output */
 #cmakedefine ENABLE_CBE_PRINTF_A ${ENABLE_CBE_PRINTF_A}

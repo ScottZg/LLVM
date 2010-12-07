@@ -2,6 +2,9 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
+#ifdef _WIN32_WINNT
+#undef /*nosubst*/_WIN32_WINNT
+#endif
 
 /* Relative directory for resource files */
 #undef CLANG_RESOURCE_DIR

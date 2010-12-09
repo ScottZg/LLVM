@@ -321,7 +321,7 @@ void X86FrameLowering::emitCalleeSavedFrameMoves(MachineFunction &MF,
     // move" for this extra "PUSH", the linker will lose track of the fact that
     // the frame pointer should have the value of the first "PUSH" when it's
     // trying to unwind.
-    // 
+    //
     // FIXME: This looks inelegant. It's possibly correct, but it's covering up
     //        another bug. I.e., one where we generate a prolog like this:
     //

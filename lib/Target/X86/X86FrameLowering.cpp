@@ -555,14 +555,23 @@ void X86FrameLowering::emitPrologue(MachineFunction &MF) const {
   // responsible for adjusting the stack pointer.  Touching the stack at 4K
   // increments is necessary to ensure that the guard pages used by the OS
   // virtual memory manager are allocated in correct sequence.
-  if (NumBytes >= 4096 && (STI.isTargetCygMing() || STI.isTargetWin32())) {
+  if (NumBytes >= 4096 && Is64Bit && STI.isTargetCygMing()) {
+    // Sanity check that EAX is not livein for this function.  It should
+    // should not be, so throw an assert.
+    assert(!isEAXLiveIn(MF) && "EAX is livein in the Cygming64 case!");
+
+    BuildMI(MBB, MBBI, DL, TII.get(X86::MOV64ri), X86::RAX)
+      .addImm(NumBytes);
+    BuildMI(MBB, MBBI, DL, TII.get(X86::W64ALLOCA))
+      .addExternalSymbol("___chkstk")
+      .addReg(StackPtr, RegState::Define | RegState::Implicit);
+    // Cygming's ___chkstk adjusts %rsp.
+  } else if (NumBytes >= 4096 && (STI.isTargetCygMing() || STI.isTargetWin32())) {
     // Check whether EAX is livein for this function.
     bool isEAXAlive = isEAXLiveIn(MF);
 
     const char *StackProbeSymbol =
       STI.isTargetWindows() ? "_chkstk" : "_alloca";
-    if (Is64Bit && STI.isTargetCygMing())
-      StackProbeSymbol = "__chkstk";
     unsigned CallOp = Is64Bit ? X86::CALL64pcrel32 : X86::CALLpcrel32;
     if (!isEAXAlive) {
       BuildMI(MBB, MBBI, DL, TII.get(X86::MOV32ri), X86::EAX)
@@ -598,9 +607,9 @@ void X86FrameLowering::emitPrologue(MachineFunction &MF) const {
 
     // Handle the 64-bit Windows ABI case where we need to call __chkstk.
     // Function prologue is responsible for adjusting the stack pointer.
-    BuildMI(MBB, MBBI, DL, TII.get(X86::MOV32ri), X86::EAX)
+    BuildMI(MBB, MBBI, DL, TII.get(X86::MOV64ri), X86::RAX)
       .addImm(NumBytes);
-    BuildMI(MBB, MBBI, DL, TII.get(X86::WINCALL64pcrel32))
+    BuildMI(MBB, MBBI, DL, TII.get(X86::W64ALLOCA))
       .addExternalSymbol("__chkstk")
       .addReg(StackPtr, RegState::Define | RegState::Implicit);
     emitSPUpdate(MBB, MBBI, StackPtr, -(int64_t)NumBytes, Is64Bit,

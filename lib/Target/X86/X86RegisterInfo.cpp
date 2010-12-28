@@ -576,7 +576,8 @@ X86RegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
   unsigned BasePtr;
 
   unsigned Opc = MI.getOpcode();
-  bool AfterFPPop = Opc == X86::TAILJMPm64 || Opc == X86::TAILJMPm;
+  bool AfterFPPop = (Opc == X86::TAILJMPm64 ||
+                     Opc == X86::TAILJMPm);
   if (needsStackRealignment(MF))
     BasePtr = (FrameIndex < 0 ? FramePtr : StackPtr);
   else if (AfterFPPop)

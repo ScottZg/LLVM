@@ -760,6 +760,12 @@ void X86FrameLowering::emitEpilogue(MachineFunction &MF,
   }
 
   // We're returning from function via eh_return.
+  bool isRel = (RetOpcode == X86::TCRETURNdi ||
+                RetOpcode == X86::TCRETURNdi64);
+  bool isMem = (RetOpcode == X86::TCRETURNmi ||
+                RetOpcode == X86::TCRETURNmi64);
+  bool isReg = (RetOpcode == X86::TCRETURNri ||
+                RetOpcode == X86::TCRETURNri64);
   if (RetOpcode == X86::EH_RETURN || RetOpcode == X86::EH_RETURN64) {
     MBBI = MBB.getLastNonDebugInstr();
     MachineOperand &DestAddr  = MBBI->getOperand(0);
@@ -767,11 +773,7 @@ void X86FrameLowering::emitEpilogue(MachineFunction &MF,
     BuildMI(MBB, MBBI, DL,
             TII.get(Is64Bit ? X86::MOV64rr : X86::MOV32rr),
             StackPtr).addReg(DestAddr.getReg());
-  } else if (RetOpcode == X86::TCRETURNri || RetOpcode == X86::TCRETURNdi ||
-             RetOpcode == X86::TCRETURNmi ||
-             RetOpcode == X86::TCRETURNri64 || RetOpcode == X86::TCRETURNdi64 ||
-             RetOpcode == X86::TCRETURNmi64) {
-    bool isMem = RetOpcode == X86::TCRETURNmi || RetOpcode == X86::TCRETURNmi64;
+  } else if (isReg || isRel || isMem) {
     // Tail call return: adjust the stack pointer and jump to callee.
     MBBI = MBB.getLastNonDebugInstr();
     MachineOperand &JumpTarget = MBBI->getOperand(0);
@@ -795,10 +797,11 @@ void X86FrameLowering::emitEpilogue(MachineFunction &MF,
     }
 
     // Jump to label or value in register.
-    if (RetOpcode == X86::TCRETURNdi || RetOpcode == X86::TCRETURNdi64) {
+    if (isRel) {
       MachineInstrBuilder MIB =
-        BuildMI(MBB, MBBI, DL, TII.get((RetOpcode == X86::TCRETURNdi)
-                                       ? X86::TAILJMPd : X86::TAILJMPd64));
+        BuildMI(MBB, MBBI, DL,
+                TII.get(RetOpcode == X86::TCRETURNdi ? X86::TAILJMPd
+                        : X86::TAILJMPd64));
       if (JumpTarget.isGlobal())
         MIB.addGlobalAddress(JumpTarget.getGlobal(), JumpTarget.getOffset(),
                              JumpTarget.getTargetFlags());
@@ -807,18 +810,20 @@ void X86FrameLowering::emitEpilogue(MachineFunction &MF,
         MIB.addExternalSymbol(JumpTarget.getSymbolName(),
                               JumpTarget.getTargetFlags());
       }
-    } else if (RetOpcode == X86::TCRETURNmi || RetOpcode == X86::TCRETURNmi64) {
+    } else if (isMem) {
       MachineInstrBuilder MIB =
-        BuildMI(MBB, MBBI, DL, TII.get((RetOpcode == X86::TCRETURNmi)
-                                       ? X86::TAILJMPm : X86::TAILJMPm64));
+        BuildMI(MBB, MBBI, DL,
+                TII.get(RetOpcode == X86::TCRETURNmi ? X86::TAILJMPm
+                        : X86::TAILJMPm64));
       for (unsigned i = 0; i != 5; ++i)
         MIB.addOperand(MBBI->getOperand(i));
-    } else if (RetOpcode == X86::TCRETURNri64) {
-      BuildMI(MBB, MBBI, DL, TII.get(X86::TAILJMPr64)).
+    } else if (isReg) {
+      BuildMI(MBB, MBBI, DL,
+              TII.get(RetOpcode == X86::TCRETURNri64 ? X86::TAILJMPr64
+                      : X86::TAILJMPr)).
         addReg(JumpTarget.getReg(), RegState::Kill);
     } else {
-      BuildMI(MBB, MBBI, DL, TII.get(X86::TAILJMPr)).
-        addReg(JumpTarget.getReg(), RegState::Kill);
+      llvm_unreachable("What could I select for TCRETURN?");
     }
 
     MachineInstr *NewMI = prior(MBBI);

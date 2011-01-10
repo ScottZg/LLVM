@@ -1863,6 +1863,7 @@ X86TargetLowering::LowerCall(SDValue Chain, SDValue Callee,
                              SmallVectorImpl<SDValue> &InVals) const {
   MachineFunction &MF = DAG.getMachineFunction();
   bool Is64Bit        = Subtarget->is64Bit();
+  bool IsWin64        = Subtarget->isTargetWin64();
   bool IsStructRet    = CallIsStructReturn(Outs);
   bool IsSibcall      = false;
 
@@ -1970,7 +1971,7 @@ X86TargetLowering::LowerCall(SDValue Chain, SDValue Callee,
 
     if (VA.isRegLoc()) {
       RegsToPass.push_back(std::make_pair(VA.getLocReg(), Arg));
-      if (isVarArg && Subtarget->isTargetWin64()) {
+      if (isVarArg && IsWin64) {
         // Win64 ABI requires argument XMM reg to be copied to the corresponding
         // shadow reg if callee is a varargs function.
         unsigned ShadowReg = 0;
@@ -2036,7 +2037,7 @@ X86TargetLowering::LowerCall(SDValue Chain, SDValue Callee,
     }
   }
 
-  if (Is64Bit && isVarArg && !Subtarget->isTargetWin64()) {
+  if (Is64Bit && isVarArg && !IsWin64) {
     // From AMD64 ABI document:
     // For calls that may call functions that use varargs or stdargs
     // (prototype-less calls or calls to functions containing ellipsis (...) in
@@ -2211,7 +2212,7 @@ X86TargetLowering::LowerCall(SDValue Chain, SDValue Callee,
     Ops.push_back(DAG.getRegister(X86::EBX, getPointerTy()));
 
   // Add an implicit use of AL for non-Windows x86 64-bit vararg functions.
-  if (Is64Bit && isVarArg && !Subtarget->isTargetWin64())
+  if (Is64Bit && isVarArg && !IsWin64)
     Ops.push_back(DAG.getRegister(X86::AL, MVT::i8));
 
   if (InFlag.getNode())

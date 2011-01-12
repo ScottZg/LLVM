@@ -39,6 +39,11 @@ else()
   endif()
 endif()
 
+# Add appropriate flags for GCC
+if (CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-common -Woverloaded-virtual -Wcast-qual -fno-strict-aliasing -pedantic -Wno-long-long -Wall -W -Wno-unused-parameter -Wwrite-strings")
+endif ()
+
 if(WIN32)
   if(CYGWIN)
     set(LLVM_ON_WIN32 0)

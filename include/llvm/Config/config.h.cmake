@@ -80,6 +80,10 @@
 /* Define to 1 if you have the <ctype.h> header file. */
 #cmakedefine HAVE_CTYPE_H ${HAVE_CTYPE_H}
 
+/* Define to 1 if you have the declaration of `SetInformationJobObject', and
+   to 0 if you don't. */
+#cmakedefine HAVE_DECL_SETINFORMATIONJOBOBJECT ${HAVE_DECL_SETINFORMATIONJOBOBJECT}
+
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #cmakedefine HAVE_DIRENT_H ${HAVE_DIRENT_H}

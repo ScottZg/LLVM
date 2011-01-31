@@ -1227,6 +1227,7 @@ if test "$llvm_cv_os_type" = "MingW" ; then
 
   AC_CHECK_LIB(imagehlp, main)
   AC_CHECK_LIB(psapi, main)
+  AC_CHECK_DECLS([SetInformationJobObject],,,[#include <windows.h>])
 fi
 
 dnl dlopen() is required for plugin support.

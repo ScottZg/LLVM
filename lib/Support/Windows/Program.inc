@@ -22,13 +22,15 @@
 //===          and must not be UNIX code
 //===----------------------------------------------------------------------===//
 
-#ifdef __MINGW32__
+#if defined(HAVE_DECL_SETINFORMATIONJOBOBJECT)
+#if !HAVE_DECL_SETINFORMATIONJOBOBJECT
 // Ancient mingw32's w32api might not have this declaration.
 extern "C"
 BOOL WINAPI SetInformationJobObject(HANDLE hJob,
                                     JOBOBJECTINFOCLASS JobObjectInfoClass,
                                     LPVOID lpJobObjectInfo,
                                     DWORD cbJobObjectInfoLength);
+#endif
 #endif
 
 namespace {

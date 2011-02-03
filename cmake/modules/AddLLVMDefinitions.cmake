@@ -11,3 +11,12 @@ macro(add_llvm_definitions)
   endforeach(arg)
   add_definitions( ${ARGN} )
 endmacro(add_llvm_definitions)
+
+# Following C/C++ checks can use -Dname=value.
+# eg. add_llvm_config_definition(_WIN32_WINNT 0x0500)
+# Some declarations might be unavailable without certain definition.
+# configure_file() can use its definition(s).
+macro(add_llvm_config_definition name value)
+  set(${name} ${value})
+  list(APPEND CMAKE_REQUIRED_DEFINITIONS "-D${name}=${value}")
+endmacro(add_llvm_config_definition name value)

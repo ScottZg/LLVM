@@ -86,6 +86,12 @@ if( NOT LLVM_ON_WIN32 )
 endif()
 
 # function checks
+if (LLVM_ON_WIN32)
+  add_llvm_config_definition(_WIN32_WINNT 0x0500)
+  add_llvm_config_definition(_WIN32_IE 0x0500)
+  add_llvm_config_definition(WIN32_LEAN_AND_MEAN 1)
+endif ()
+
 check_symbol_exists(getpagesize unistd.h HAVE_GETPAGESIZE)
 check_symbol_exists(getrusage sys/resource.h HAVE_GETRUSAGE)
 check_symbol_exists(setrlimit sys/resource.h HAVE_SETRLIMIT)

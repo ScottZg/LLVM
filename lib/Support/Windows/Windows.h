@@ -16,11 +16,6 @@
 //===          is guaranteed to work on *all* Win32 variants.
 //===----------------------------------------------------------------------===//
 
-// Require at least Windows 2000 API.
-#define _WIN32_WINNT 0x0500
-#define _WIN32_IE    0x0500 // MinGW at it again.
-#define WIN32_LEAN_AND_MEAN
-
 #include "llvm/Config/config.h" // Get build system configuration settings
 #include <Windows.h>
 #include <ShlObj.h>

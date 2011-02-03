@@ -612,6 +612,15 @@
 /* Define if use udis86 library */
 #undef USE_UDIS86
 
+/* We don't need fullset of Windows headers. */
+#cmakedefine WIN32_LEAN_AND_MEAN
+
+/* MinGW at it again. */
+#cmakedefine _WIN32_IE ${_WIN32_IE}
+
+/* We require Windows 2000 API. */
+#cmakedefine _WIN32_WINNT ${_WIN32_WINNT}
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 

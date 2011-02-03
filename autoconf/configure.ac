@@ -1218,6 +1218,13 @@ dnl===-----------------------------------------------------------------------===
 
 AC_CHECK_LIB(m,sin)
 if test "$llvm_cv_os_type" = "MingW" ; then
+  AC_DEFINE([_WIN32_WINNT],[0x0500],
+            [We require Windows 2000 API.])
+  AC_DEFINE([_WIN32_IE],[0x0500],
+            [MinGW at it again.])
+  AC_DEFINE([WIN32_LEAN_AND_MEAN],[],
+            [We don't need fullset of Windows headers.])
+
   AC_CHECK_LIB(imagehlp, main)
   AC_CHECK_LIB(psapi, main)
 fi

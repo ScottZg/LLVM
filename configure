@@ -13553,6 +13553,22 @@ fi
 
 if test "$llvm_cv_os_type" = "MingW" ; then
 
+cat >>confdefs.h <<\_ACEOF
+#define _WIN32_WINNT 0x0500
+_ACEOF
+
+
+cat >>confdefs.h <<\_ACEOF
+#define _WIN32_IE 0x0500
+_ACEOF
+
+
+cat >>confdefs.h <<\_ACEOF
+#define WIN32_LEAN_AND_MEAN
+_ACEOF
+
+
+
 { echo "$as_me:$LINENO: checking for main in -limagehlp" >&5
 echo $ECHO_N "checking for main in -limagehlp... $ECHO_C" >&6; }
 if test "${ac_cv_lib_imagehlp_main+set}" = set; then

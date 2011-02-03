@@ -1408,7 +1408,7 @@ AC_C_PRINTF_A
 AC_FUNC_RAND48
 
 dnl Check the declaration "Secure API" on Windows environments.
-AC_CHECK_DECLS([strerror_s])
+AC_CHECK_DECLS([_chsize_s,strerror_s],,,[#include <io.h>])
 
 dnl Check symbols in libgcc.a for JIT on Mingw.
 if test "$llvm_cv_os_type" = "MingW" ; then

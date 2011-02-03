@@ -160,7 +160,7 @@ check_symbol_exists(memcpy string.h HAVE_MEMCPY)
 check_symbol_exists(memmove string.h HAVE_MEMMOVE)
 check_symbol_exists(setenv stdlib.h HAVE_SETENV)
 if ( LLVM_ON_WIN32 )
-  check_symbol_exists(_chsize_s io.h HAVE__CHSIZE_S)
+  check_symbol_exists(_chsize_s io.h HAVE_DECL__CHSIZE_S)
   check_symbol_exists(SetInformationJobObject windows.h HAVE_DECL_SETINFORMATIONJOBOBJECT)
 
   check_function_exists(_alloca HAVE__ALLOCA)

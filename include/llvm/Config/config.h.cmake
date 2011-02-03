@@ -73,6 +73,10 @@
    don't. */
 #cmakedefine01 HAVE_DECL_STRERROR_S
 
+/* Define to 1 if you have the declaration of `_chsize_s', and to 0 if you
+   don't. */
+#cmakedefine01 HAVE_DECL__CHSIZE_S
+
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #cmakedefine HAVE_DIRENT_H ${HAVE_DIRENT_H}
@@ -716,9 +720,6 @@
 
 /* Define to a function implementing strdup */
 #cmakedefine strdup ${strdup}
-
-/* Define to 1 if you have the `_chsize_s' function. */
-#cmakedefine HAVE__CHSIZE_S ${HAVE__CHSIZE_S}
 
 /* define if the compiler implements namespaces */
 #undef HAVE_NAMESPACES

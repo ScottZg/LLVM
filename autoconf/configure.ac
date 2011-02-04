@@ -1224,6 +1224,8 @@ if test "$llvm_cv_os_type" = "MingW" ; then
             [MinGW at it again.])
   AC_DEFINE([WIN32_LEAN_AND_MEAN],[],
             [We don't need fullset of Windows headers.])
+  AC_DEFINE([MINGW_HAS_SECURE_API],[],
+            [It enables Secure API on mingw.])
 
   AC_CHECK_LIB(imagehlp, main)
   AC_CHECK_LIB(psapi, main)

@@ -13568,6 +13568,11 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 
+cat >>confdefs.h <<\_ACEOF
+#define MINGW_HAS_SECURE_API
+_ACEOF
+
+
 
 { echo "$as_me:$LINENO: checking for main in -limagehlp" >&5
 echo $ECHO_N "checking for main in -limagehlp... $ECHO_C" >&6; }

@@ -613,6 +613,9 @@
 /* Define to the system default library search path. */
 #cmakedefine LTDL_SYSSEARCHPATH "${LTDL_SYSSEARCHPATH}"
 
+/* It enables Secure API on mingw. */
+#cmakedefine MINGW_HAS_SECURE_API
+
 /* Define if /dev/zero should be used when mapping RWX memory, or undefine if
    its not necessary */
 #undef NEED_DEV_ZERO_FOR_MMAP

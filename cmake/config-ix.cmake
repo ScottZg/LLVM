@@ -92,6 +92,11 @@ if (LLVM_ON_WIN32)
   add_llvm_config_definition(WIN32_LEAN_AND_MEAN 1)
 endif ()
 
+if (MINGW)
+  # Newer version of mingw header could use Secure APIs
+  add_llvm_config_definition(MINGW_HAS_SECURE_API 1)
+endif ()
+
 check_symbol_exists(getpagesize unistd.h HAVE_GETPAGESIZE)
 check_symbol_exists(getrusage sys/resource.h HAVE_GETRUSAGE)
 check_symbol_exists(setrlimit sys/resource.h HAVE_SETRLIMIT)

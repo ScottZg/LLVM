@@ -12,6 +12,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifdef _WIN32
+#include "Windows/Windows.h"
+#endif
+
 #include "llvm/Support/Memory.h"
 #include "llvm/Support/Valgrind.h"
 #include "llvm/Config/config.h"

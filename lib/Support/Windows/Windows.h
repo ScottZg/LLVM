@@ -11,6 +11,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifndef LLVM_WINDOWS_H
+#define LLVM_WINDOWS_H
+
 //===----------------------------------------------------------------------===//
 //=== WARNING: Implementation here must contain only generic Win32 code that
 //===          is guaranteed to work on *all* Win32 variants.
@@ -115,3 +118,5 @@ c_str(SmallVectorImpl<T> &str) {
   return str.data();
 }
 } // end namespace llvm.
+
+#endif

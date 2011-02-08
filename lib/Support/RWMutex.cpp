@@ -11,6 +11,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifdef _WIN32
+#include "Windows/Windows.h"
+#endif
+
 #include "llvm/Config/config.h"
 #include "llvm/Support/RWMutex.h"
 #include <cstring>

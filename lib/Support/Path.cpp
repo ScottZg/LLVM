@@ -11,6 +11,13 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifdef _WIN32
+#include "Windows/Windows.h"
+// We need to undo a macro defined in Windows.h, otherwise we won't compile:
+#undef CopyFile
+#undef GetCurrentDirectory
+#endif
+
 #include "llvm/Support/Path.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Config/config.h"

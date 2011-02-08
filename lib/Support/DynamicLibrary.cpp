@@ -14,6 +14,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifdef _WIN32
+#include "Windows/Windows.h"
+#endif
+
 #include "llvm/Support/DynamicLibrary.h"
 #include "llvm/Support/Mutex.h"
 #include "llvm/Config/config.h"

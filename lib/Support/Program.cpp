@@ -11,6 +11,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifdef _WIN32
+#include "Windows/Windows.h"
+#endif
+
 #include "llvm/Support/Program.h"
 #include "llvm/Config/config.h"
 using namespace llvm;

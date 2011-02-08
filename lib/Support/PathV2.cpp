@@ -11,6 +11,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifdef _WIN32
+#include "Windows/Windows.h"
+#endif
+
 #include "llvm/Support/PathV2.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/ErrorHandling.h"

@@ -417,7 +417,7 @@ void MCAsmStreamer::EmitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
 /// @param Size - The size of the common symbol.
 void MCAsmStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size) {
   assert(MAI.hasLCOMMDirective() && "Doesn't have .lcomm, can't emit it!");
-  OS << "\t.lcomm\t" << *Symbol << ',' << Size;
+  OS << "\t.lcomm\t" << *Symbol << ',' << Size << ",16";
   EmitEOL();
 }
 

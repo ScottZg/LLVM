@@ -220,7 +220,35 @@ raw_ostream &raw_ostream::operator<<(const void *P) {
 }
 
 raw_ostream &raw_ostream::operator<<(double N) {
+#if defined(__MINGW64_VERSION_MAJOR)
+  static const double MZ = -0.0;
+  if (memcmp(&N, &MZ, sizeof(double)) == 0)
+    return this->operator<<("-0.000000e+00");
+#endif
+
+#if defined(_MSC_VER)
+  unsigned f = _get_output_format();
+  _set_output_format(_TWO_DIGIT_EXPONENT);
+  raw_ostream& r = this->operator<<(format("%e", N));
+  _set_output_format(f);
+  return r;
+#elif defined(__MINGW32__)
+  char buf[32];
+  int len;
+  len = snprintf(buf, sizeof(buf), "%e", N);
+  if (len >= 4 && buf[len - 3] == '0') {
+    int c1 = buf[len - 2];
+    int c0 = buf[len - 1];
+    if (isdigit(c1) && isdigit(c0)) {
+      buf[len - 3] = c1;
+      buf[len - 2] = c0;
+      buf[--len] = 0;
+    }
+  }
+  return this->operator<<(buf);
+#else
   return this->operator<<(format("%e", N));
+#endif
 }
 
 

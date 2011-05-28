@@ -696,10 +696,18 @@ def VCVTSS2SDrr : I<0x5A, MRMSrcReg, (outs FR64:$dst),
                     (ins FR32:$src1, FR32:$src2),
                     "vcvtss2sd\t{$src2, $src1, $dst|$dst, $src1, $src2}",
                     []>, XS, Requires<[HasAVX]>, VEX_4V;
-def VCVTSS2SDrm : I<0x5A, MRMSrcMem, (outs FR64:$dst),
-                    (ins FR32:$src1, f32mem:$src2),
-                    "vcvtss2sd\t{$src2, $src1, $dst|$dst, $src1, $src2}",
-                    []>, XS, VEX_4V, Requires<[HasAVX, OptForSize]>;
+
+let isAsmParserOnly = 1 in {
+  def VCVTSS2SDrm : I<0x5A, MRMSrcMem, (outs FR64:$dst),
+                      (ins FR32:$src1, f32mem:$src2),
+                      "vcvtss2sd\t{$src2, $src1, $dst|$dst, $src1, $src2}",
+                      []>, XS, VEX_4V, Requires<[HasAVX, OptForSize]>;
+}
+
+def VCVTSS2SDrm_alt : I<0x5A, MRMSrcMem, (outs FR64:$dst),
+                    (ins f32mem:$src),
+                    "vcvtss2sd\t{$src, $src, $dst|$dst, $src, $src}",
+                    []>, XS, VEX, Requires<[HasAVX, OptForSize]>;
 def : Pat<(f64 (fextend FR32:$src)), (VCVTSS2SDrr FR32:$src, FR32:$src)>,
         Requires<[HasAVX]>;
 
@@ -742,6 +750,10 @@ def Int_CVTSS2SDrm: I<0x5A, MRMSrcMem,
 def : Pat<(extloadf32 addr:$src),
           (CVTSS2SDrr (MOVSSrm addr:$src))>,
       Requires<[HasSSE2, OptForSpeed]>;
+
+def : Pat<(extloadf32 addr:$src),
+          (VCVTSS2SDrm_alt addr:$src)>,
+      Requires<[HasAVX, OptForSpeed]>;
 
 // Convert doubleword to packed single/double fp
 // SSE2 instructions without OpSize prefix
@@ -3551,6 +3563,10 @@ def : InstAlias<"monitor %rax, %rcx, %rdx", (MONITORrrr)>,
 let Predicates = [HasSSE2] in
  def : Pat<(fextend (loadf32 addr:$src)),
            (CVTSS2SDrm addr:$src)>;
+
+let Predicates = [HasAVX] in
+ def : Pat<(fextend (loadf32 addr:$src)),
+           (VCVTSS2SDrm_alt addr:$src)>;
 
 // bit_convert
 let Predicates = [HasXMMInt] in {

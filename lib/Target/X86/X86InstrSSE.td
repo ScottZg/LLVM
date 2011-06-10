@@ -744,6 +744,10 @@ def : Pat<(extloadf32 addr:$src),
           (CVTSS2SDrr (MOVSSrm addr:$src))>,
       Requires<[HasSSE2, OptForSpeed]>;
 
+def : Pat<(extloadf32 addr:$src),
+          (VCVTSS2SDrm_alt addr:$src)>,
+      Requires<[HasAVX, OptForSpeed]>;
+
 // Convert doubleword to packed single/double fp
 // SSE2 instructions without OpSize prefix
 def Int_VCVTDQ2PSrr : I<0x5B, MRMSrcReg, (outs VR128:$dst), (ins VR128:$src),

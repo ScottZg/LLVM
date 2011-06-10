@@ -2063,6 +2063,13 @@ def : Pat<(v16i8 immAllZerosV), (V_SET0PI)>;
 def : Pat<(f32 (vector_extract (v4f32 VR128:$src), (iPTR 0))),
           (f32 (EXTRACT_SUBREG (v4f32 VR128:$src), sub_ss))>;
 
+//
+// TODO: Find a way to provide zero-filled f32 register more efficiently.
+//
+def : Pat<(extloadf32 addr:$src),
+    (VCVTSS2SDrm (f32 (EXTRACT_SUBREG (AVX_SET0PS), sub_ss)), addr:$src)>,
+Requires<[HasAVX, OptForSpeed]>;
+
 //===----------------------------------------------------------------------===//
 // SSE 1 & 2 - Load/Store XCSR register
 //===----------------------------------------------------------------------===//
@@ -3588,6 +3595,10 @@ def : InstAlias<"monitor %rax, %rcx, %rdx", (MONITORrrr)>,
 let Predicates = [HasSSE2] in
  def : Pat<(fextend (loadf32 addr:$src)),
            (CVTSS2SDrm addr:$src)>;
+
+let Predicates = [HasAVX] in
+ def : Pat<(fextend (loadf32 addr:$src)),
+           (VCVTSS2SDrm (f32 (EXTRACT_SUBREG (AVX_SET0PS), sub_ss)), addr:$src)>;
 
 // bit_convert
 let Predicates = [HasXMMInt] in {
